@@ -26,32 +26,33 @@ filename = f'{data_dir}/{timestamp}.zip'
 # calling api
 url = 'https://analytics.eu.amplitude.com/api/2/export'
 
-response = requests.get(url, params=params, auth=(AMP_API_KEY, AMP_SECRET_KEY))
-status_code = response.status_code
-data_z = response.content
 
 # checking attempt numbers
 attempt = 1
 max_attempts = 3
 
-#while attempt <= max_attempts:
+while attempt <= max_attempts:
     # calling API
+    response = requests.get(url, params=params, auth=(AMP_API_KEY, AMP_SECRET_KEY))
+    status_code = response.status_code
 
-# handling status codes
-if 200 <= status_code < 300: # request recieved successfully
-    # saving gzipped file
-    with open(filename, 'wb') as file:
-        file.write(data_z)
+    # handling status codes
+    if 200 <= status_code < 300: # request recieved successfully
+        
+        data_z = response.content # getting zipped file from api
 
-        with zipfile.ZipFile(filename, 'r') as zip_ref:
-            zip_ref.extractall(data_dir)
+        # saving zipped file
+        with open(filename, 'wb') as file:
+            file.write(data_z)
+            with zipfile.ZipFile(filename, 'r') as zip_ref:
+                # zip_ref.extractall(data_dir)
+                print(zip_ref.namelist())        
+            # unzip outer file
+        print(f'file {filename} saved successfully')
 
-        # unzip outer file
-    print(f'file {filename} saved successfully')
+    elif 300 <= status_code < 500: # issue that means the api can't be run
+        print(f'API call failed, status code {status_code}')
 
-elif 300 <= status_code < 500: # issue that means the api can't be run
-    print(f'API call failed, status code {status_code}')
-
-else:
-    print(f'API failed, status code {status_code}')
+    else:
+        print(f'API failed, status code {status_code}')
 
