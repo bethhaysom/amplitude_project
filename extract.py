@@ -1,6 +1,7 @@
 import os
 import gzip
 import json
+import zipfile
 from datetime import datetime as dt
 import requests 
 from dotenv import load_dotenv
@@ -20,11 +21,37 @@ params = {
 # configure output file
 data_dir = 'data'
 os.makedirs(data_dir,exist_ok=True)
-filename = f'{data_dir}/{timestamp}.json'
+filename = f'{data_dir}/{timestamp}.zip'
 
 # calling api
-url = 'https://analytics.eu.amplitude.com'
+url = 'https://analytics.eu.amplitude.com/api/2/export'
 
 response = requests.get(url, params=params, auth=(AMP_API_KEY, AMP_SECRET_KEY))
 status_code = response.status_code
+data_z = response.content
+
+# checking attempt numbers
+attempt = 1
+max_attempts = 3
+
+#while attempt <= max_attempts:
+    # calling API
+
+# handling status codes
+if 200 <= status_code < 300: # request recieved successfully
+    # saving gzipped file
+    with open(filename, 'wb') as file:
+        file.write(data_z)
+
+        with zipfile.ZipFile(filename, 'r') as zip_ref:
+            zip_ref.extractall(data_dir)
+
+        # unzip outer file
+    print(f'file {filename} saved successfully')
+
+elif 300 <= status_code < 500: # issue that means the api can't be run
+    print(f'API call failed, status code {status_code}')
+
+else:
+    print(f'API failed, status code {status_code}')
 
