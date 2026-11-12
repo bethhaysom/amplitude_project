@@ -1,12 +1,16 @@
 import os
 import gzip
 import json
+import time
 import zipfile
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 import requests 
 from dotenv import load_dotenv
 
-timestamp = dt.now().strftime('%Y-%m-%d %H-%M-%S')
+yesterday = dt.now() + timedelta(days=-1)
+timestamp = yesterday.strftime('%Y-%m-%d %H-%M-%S')
+start_date = yesterday.strftime('%Y%m%dT00')
+end_date = yesterday.strftime('%Y%m%dT23')
 
 load_dotenv()
 
@@ -14,8 +18,8 @@ AMP_API_KEY = os.getenv('AMP_API_KEY')
 AMP_SECRET_KEY = os.getenv('AMP_SECRET_KEY')
 
 params = {
-    'start': '20261110T00',
-    'end': '20261110T23'
+    'start': f'{start_date}',
+    'end': f'{end_date}'
 }
 
 # configure output file
@@ -38,21 +42,30 @@ while attempt <= max_attempts:
 
     # handling status codes
     if 200 <= status_code < 300: # request recieved successfully
-        
-        data_z = response.content # getting zipped file from api
+        try:
+            data_z = response.content # getting zipped file from api
 
-        # saving zipped file
-        with open(filename, 'wb') as file:
-            file.write(data_z)
-            with zipfile.ZipFile(filename, 'r') as zip_ref:
-                # zip_ref.extractall(data_dir)
-                print(zip_ref.namelist())        
-            # unzip outer file
-        print(f'file {filename} saved successfully')
+            # saving zipped file
+            with open(filename, 'wb') as file:
+                file.write(data_z)
+                
+            print(f'file {filename} saved successfully')
+
+        except Exception as e:
+            print(f'An error occurred when saving the .zip: {e}')
+        
+        break
 
     elif 300 <= status_code < 500: # issue that means the api can't be run
         print(f'API call failed, status code {status_code}')
 
-    else:
-        print(f'API failed, status code {status_code}')
+        break
 
+    else:
+        if attempt == max_attempts:
+            print(f'Max number of attempts reached. Status code {status_code}. Investigate further pls.')
+        else: 
+            print(f'Attempt {attempt} failed, status code {status_code}. Trying again...')
+        
+        attempt += 1
+        time.sleep(30)
