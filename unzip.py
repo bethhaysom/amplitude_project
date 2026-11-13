@@ -14,7 +14,7 @@ file_zip = f'{data_dir}/{timestamp}.zip'
 
 # for each .zip in /data, want to .extractall
 with zipfile.ZipFile(file_zip, 'r') as zip_ref:
-    # zip_ref.extractall(data_dir)
+    # zip_ref.extractall(data_dir) # extracts .zip
     data_zip = zip_ref.namelist()    # returns name of all .gz files in .zip
 
     # within the .zip, for each .gz file, get path name

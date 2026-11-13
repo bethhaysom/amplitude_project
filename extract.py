@@ -6,7 +6,7 @@ import requests
 from dotenv import load_dotenv
 
 yesterday = dt.now() + timedelta(days=-1)
-timestamp = yesterday.strftime('%Y-%m-%d %H-%M-%S')
+timestamp = yesterday.strftime('%Y-%m-%d')
 start_date = yesterday.strftime('%Y%m%dT00')
 end_date = yesterday.strftime('%Y%m%dT23')
 
