@@ -1,9 +1,9 @@
 # Amplitude Data Pipeline Project 
-![Phase](https://img.shields.io/badge/Part_1-Extract_Complete-brightgreen) ![Phase 2](https://img.shields.io/badge/Part_2-Load_-lightgrey) ![Phase 3](https://img.shields.io/badge/Part_3-Orchestration_-lightgrey) ![Phase 4](https://img.shields.io/badge/Part_4-Data_Modelling_-lightgrey) ![Phase 5](https://img.shields.io/badge/Part_5-Snowflake_-lightgrey) ![Phase 6](https://img.shields.io/badge/Part_6-dbt_-lightgrey)
+![Phase](https://img.shields.io/badge/Part_1-Extract_Complete-brightgreen) ![Phase 2](https://img.shields.io/badge/Part_2-Load_-brightgreen) ![Phase 3](https://img.shields.io/badge/Part_3-Orchestration_-lightgrey) ![Phase 4](https://img.shields.io/badge/Part_4-Data_Modelling_-lightgrey) ![Phase 5](https://img.shields.io/badge/Part_5-Snowflake_-lightgrey) ![Phase 6](https://img.shields.io/badge/Part_6-dbt_-lightgrey)
 
 ## Part 1: Extract
 
-This project extracts daily event data from the Amplitude Export API, stores the compressed archives locally with standardized naming, and unpacks the hourly JSON files for downstream processing.
+Extracting daily event data from the Amplitude Export API, stores the compressed archives locally with standardized naming, and unpacks the hourly JSON files for downstream processing.
 
 ### Scope & Tasks
 - [x] Plan for extracting the data
@@ -29,11 +29,8 @@ From the API documentation, I decided that it needs **Incremental Refreshes**. F
 
 ### Script Plan and Breakdown
 
-#### Extract.py
-<img width="50%" alt="Extract.py workflow sketch" src="https://github.com/user-attachments/assets/29a2bc9b-e5dc-4af8-9233-2ba93597e476" />
-
-#### Unzip.py
-<img width="50%" alt="Unzip.py workflow sketch" src="https://github.com/user-attachments/assets/4c202fcc-4fe6-4569-978e-4f5a899505ef" />
+#### Python Script Sketches
+<img width="90%" alt="Python workflow sketch" src="https://github.com/user-attachments/assets/8c08c86f-15e6-417d-91bc-d618d5be0340" />
 
 
 ### API output file structure
@@ -46,3 +43,13 @@ Outer ZIP File (YYYY-MM-DD.zip)
 ```
 
 The result from part one is two API scripts which, when run consecutively, output the raw JSON files from the Amplitude Event API
+
+
+## Part 2: Load
+
+The extracted `.json` files are loaded into an S3 bucket, before being loaded into Snowflake.
+
+### Workflow Sketch:
+<img width="90%" alt="Screenshot 2026-11-16 185133" src="https://github.com/user-attachments/assets/f4bfe195-b63f-4ffc-b6e3-5cdd5ac0b849" />
+
+
