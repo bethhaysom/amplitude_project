@@ -85,7 +85,13 @@ The raw data in S3 is then loaded into a Snowflake schema called **bh_amplitude_
 - Create empty table with a column for filename and a column for `.json`
 - Copy from stage to table
 
-The output from part two is a table called **bh_json_format** in the **bh_amplitude_staging** schema.
+The output from part two is a table called **bh_json_format** in the **bh_amplitude_staging** schema:
 
+| Column Name | Data Type | Source / Description |
+| :--- | :--- | :--- |
+| `JSON` | `VARIANT` | Full raw Amplitude event JSON payload (`$1`) |
+| `ROWNUM` | `INTEGER` | Row number within the source JSON file (`METADATA$FILE_ROW_NUMBER`) |
+| `FILENAME` | `STRING` | S3 object path and file name (`METADATA$FILENAME`) |
+| `LAST_MODIFIED` | `DATETIME` | Timestamp when the file was last modified in S3 (`METADATA$FILE_LAST_MODIFIED`) |
 
 
