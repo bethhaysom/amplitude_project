@@ -33,7 +33,7 @@ From the API documentation, I decided that it needs **Incremental Refreshes**. F
 <img width="90%" alt="Python workflow sketch" src="https://github.com/user-attachments/assets/8c08c86f-15e6-417d-91bc-d618d5be0340" />
 
 
-### API output file structure
+#### API output file structure
 
 ```text
 Outer ZIP File (YYYY-MM-DD.zip)
@@ -45,11 +45,46 @@ Outer ZIP File (YYYY-MM-DD.zip)
 The result from part one is two API scripts which, when run consecutively, output the raw JSON files from the Amplitude Event API
 
 
-## Part 2: Load
+## Part 2: Load (S3 & Snowflake)
 
 The extracted `.json` files are loaded into an S3 bucket, before being loaded into Snowflake.
 
-### Workflow Sketch:
-<img width="90%" alt="Screenshot 2026-11-16 185133" src="https://github.com/user-attachments/assets/f4bfe195-b63f-4ffc-b6e3-5cdd5ac0b849" />
+### Scope & Tasks
+- [x] Create an AWS S3 bucket for staging extracted Amplitude JSON data
+- [x] Configure an AWS KMS key for server-side encryption
+- [x] Set up IAM users, roles, and least-privilege policies for S3 and Snowflake access
+- [x] Set up feature branch, activate virtual environment, and install AWS SDK packages (`boto3`)
+- [x] Connect to S3 in Python and write upload script for unpacked JSON files
+- [x] Document load script and update README
+- [x] Ingest staged S3 data into Snowflake
+
+#### Workflow Sketch:
+<img width="90%" alt="Load workflow sketch" src="https://github.com/user-attachments/assets/f4bfe195-b63f-4ffc-b6e3-5cdd5ac0b849" />
+
+### AWS S3 Staging & Security
+Extracted JSON files are uploaded from local storage to an S3 staging bucket using `boto3`.
+- **Encryption:** All uploads enforce server-side encryption via a customer-managed **AWS KMS key**.
+- **Access Control:** Follows least-privilege IAM policies—Python uses write-only permissions for ingestion, while Snowflake uses a dedicated read-only IAM role via a Storage Integration.
+- **Set Up:** Set up in AWS using the AWS CLI using `.json` scripts for the *iam python policy, iam snowflake policy* and *s3 bucket encryption.*
+
+#### S3 bucket structure
+```text
+s3://bh-amplitude-storage/
+└── python-import/
+    └── YYYY-MM-DD_H.json
+```
+### Python Script:
+The `load.py` script configures s3 credentials (stored in a `.env` file), configures file paths of unzipped data, and uploads each file to s3:
+<img width="60%" alt="Python script sketch" src="https://github.com/user-attachments/assets/9386e5b2-09bb-4a61-a8c8-534870a113f4" />
+
+### Snowflake: 
+The raw data in S3 is then loaded into a Snowflake schema called **bh_amplitude_staging** through a script that uses the following steps:
+- Create storage integration
+- Create external stage
+- Create empty table with a column for filename and a column for `.json`
+- Copy from stage to table
+
+The output from part two is a table called **bh_json_format** in the **bh_amplitude_staging** schema.
+
 
 
