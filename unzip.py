@@ -8,6 +8,12 @@ from datetime import datetime as dt, timedelta
 import requests 
 from dotenv import load_dotenv
 
+# AS FUNCTION
+# Use def and set input to file name
+# Use with statement as start point
+# workout how to call this form the other script
+
+
 yesterday = dt.now() + timedelta(days=-1)
 timestamp = yesterday.strftime('%Y-%m-%d') # will want a loop that cycles through data folder and gives list of zips in there
 
