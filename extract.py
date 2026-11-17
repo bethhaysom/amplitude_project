@@ -7,8 +7,32 @@ import requests
 from dotenv import load_dotenv
 import boto3
 
-# Plan for checking s3 files:
-# connect to s3 bucket
+# date configuration:
+yesterday = dt.now().date() + timedelta(days=-1)
+timestamp = yesterday.strftime('%Y-%m-%d')
+
+#-----------------------------------------------------------------------------
+# setting up files for logging
+log_dir = 'logs'
+script_name = 'extract'
+log_timestamp = dt.now().strftime('%Y-%m-%d %H-%M-%S')
+os.makedirs(log_dir,exist_ok=True)
+os.makedirs(f'{log_dir}/{script_name}',exist_ok=True)
+log_filename = f'{log_dir}/{script_name}/{log_timestamp}.log'
+
+# configuration of log file
+logging.basicConfig(
+    filename = log_filename,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    level=logging.INFO # ignore anything below INFO
+)
+
+logger = logging.getLogger() 
+logger.info('Logger was succesfully initialiser.')
+
+#-----------------------------------------------------------------------------
+# Checking existing s3 files:
+# Connect to s3 bucket
 # Connecting to .env to pull through AWS keys
 load_dotenv()
 
@@ -46,8 +70,6 @@ max_date = max(
     ),
     default=None
 )
-yesterday = dt.now().date() + timedelta(days=-1)
-timestamp = yesterday.strftime('%Y-%m-%d')
 
 # start date function: if x < yesterday then x+1 else yesterday
 default_start = dt(2026, 11, 15).date() # added in case there is nothing in the s3 bucket currently
@@ -65,23 +87,7 @@ end_date = yesterday.strftime('%Y%m%dT23')
 print(start_date)
 print(end_date)
 
-
-# setting up files for logging
-log_dir = 'logs'
-os.makedirs(log_dir,exist_ok=True)
-log_filename = f'{log_dir}/{timestamp}.log'
-
-# configuration of log file
-logging.basicConfig(
-    filename = log_filename,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    level=logging.INFO # ignore anything below INFO
-)
-
-logger = logging.getLogger() 
-logger.info('Logger was succesfully initialiser.')
-
-
+#-----------------------------------------------------------------------------
 # api configuration
 load_dotenv()
 
@@ -102,6 +108,7 @@ filename = f'{data_dir}/{timestamp}.zip'
 url = 'https://analytics.eu.amplitude.com/api/2/export'
 
 
+#-----------------------------------------------------------------------------
 # checking attempt numbers
 attempt = 1
 max_attempts = 3
