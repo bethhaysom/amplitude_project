@@ -50,7 +50,7 @@ yesterday = dt.now().date() + timedelta(days=-1)
 timestamp = yesterday.strftime('%Y-%m-%d')
 
 # start date function: if x < yesterday then x+1 else yesterday
-default_start = dt(2026, 11, 1).date() # added in case there is nothing in the s3 bucket currently
+default_start = dt(2026, 11, 15).date() # added in case there is nothing in the s3 bucket currently
 
 if max_date is None:
     start = default_start
