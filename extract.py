@@ -1,14 +1,69 @@
 import os
 import time
 import logging
+import re
 from datetime import datetime as dt, timedelta
 import requests 
 from dotenv import load_dotenv
+import boto3
 
-yesterday = dt.now() + timedelta(days=-1)
+# Plan for checking s3 files:
+# connect to s3 bucket
+# Connecting to .env to pull through AWS keys
+load_dotenv()
+
+AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_BUCKET_NAME = os.getenv('AWS_BUCKET_NAME')
+
+# Configuring s3 credentials
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=AWS_ACCESS_KEY,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+)
+bucket_name = AWS_BUCKET_NAME
+prefix = 'python-import/'
+
+# list file names 
+response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+# Filter for .json files in Python (S3 doesn't filter by suffix natively)
+json_files = [
+    obj["Key"]
+    for obj in response.get("Contents", [])
+    if obj["Key"].endswith(".json")
+]
+#print(json_files)
+
+# remove letters at start of file name
+# isolate date and change into date format / matching start/end format
+# select max date as x
+max_date = max(
+    (
+        dt.strptime(match.group(1), "%Y-%m-%d").date()
+        for key in json_files
+        if (match := re.search(r"(\d{4}-\d{2}-\d{2})", key))
+    ),
+    default=None
+)
+yesterday = dt.now().date() + timedelta(days=-1)
 timestamp = yesterday.strftime('%Y-%m-%d')
-start_date = yesterday.strftime('%Y%m%dT00')
+
+# start date function: if x < yesterday then x+1 else yesterday
+default_start = dt(2026, 11, 15).date() # added in case there is nothing in the s3 bucket currently
+
+if max_date is None:
+    start = default_start
+elif max_date < yesterday:
+    start = max_date + timedelta(days=1)
+else:
+    print("S3 is already up to date through yesterday. Skipping API call.")
+    exit()
+
+start_date = start.strftime('%Y%m%dT00')
 end_date = yesterday.strftime('%Y%m%dT23')
+print(start_date)
+print(end_date)
 
 
 # setting up files for logging
