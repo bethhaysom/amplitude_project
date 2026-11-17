@@ -75,6 +75,7 @@ s3://bh-amplitude-storage/
 ```
 ### Python Script:
 The `load.py` script configures s3 credentials (stored in a `.env` file), configures file paths of unzipped data, and uploads each file to s3:
+
 <img width="60%" alt="Python script sketch" src="https://github.com/user-attachments/assets/9386e5b2-09bb-4a61-a8c8-534870a113f4" />
 
 ### Snowflake: 
