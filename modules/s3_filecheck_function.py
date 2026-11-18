@@ -55,5 +55,5 @@ def checking_s3_files(AWS_ACCESS_KEY: str, AWS_SECRET_ACCESS_KEY: str, AWS_BUCKE
         start = max_date + timedelta(days=1)
         return start
     else:
-        logger.info("S3 is already up to date through yesterday. Skipping API call.")
+        logger.warning("S3 is already up to date through yesterday. Skipping API call.")
         return None

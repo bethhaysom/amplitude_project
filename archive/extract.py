@@ -99,21 +99,6 @@ params = {
     'end': f'{end_date}'
 }
 
-def extract_to_json(AMP_API_KEY: str, AMP_SECRET_KEY: str, params: dict, url: str, data_dir: str, timestamp: str, max_attempts: int, delay: int):
-    """Function to extract .zip files from a URL using an API that requires keys and parameters, and saving to a destination 
-
-    Args:
-        AMP_API_KEY (str): _description_
-        AMP_SECRET_KEY (str): _description_
-        params (dict): _description_
-        url (str): _description_
-        data_dir (str): _description_
-        timestamp (str): _description_
-        max_attempts (int): _description_
-        delay (int): _description_
-    """
-
-
 # configure output file
 data_dir = 'data'
 os.makedirs(data_dir,exist_ok=True)
@@ -121,7 +106,6 @@ filename = f'{data_dir}/{timestamp}.zip'
 
 # calling api
 url = 'https://analytics.eu.amplitude.com/api/2/export'
-
 
 #-----------------------------------------------------------------------------
 # checking attempt numbers
@@ -161,6 +145,7 @@ while attempt <= max_attempts:
             logging.warning(f'Max number of attempts reached. Status code {status_code}. Investigate further pls.')
         else: 
             print(f'Attempt {attempt} failed, status code {status_code}. Trying again...')
-            logger.error
+            logger.error(f'Attempt {attempt} failed, status code {status_code}. Trying again...')
         attempt += 1
-        time.sleep(30)
+        time.sleep(delay)
+
