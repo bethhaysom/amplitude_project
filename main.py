@@ -1,16 +1,12 @@
 import os
-import time
 import logging
-import re
 from modules.logging_function import logging_config
 from modules.s3_filecheck_function import checking_s3_files
 from modules.extract_function import extract_to_zip
 from modules.load_function import load_to_s3
 from modules.unzip_function import zip_to_json
 from datetime import datetime as dt, timedelta
-import requests 
 from dotenv import load_dotenv
-import boto3
 
 # date configuration:
 yesterday = dt.now().date() + timedelta(days=-1)
