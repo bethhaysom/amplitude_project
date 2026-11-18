@@ -3,7 +3,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def logging_config(log__dir: str, log_timestamp: str):
+def logging_config(log_dir: str, log_timestamp: str):
     """Function to configure logging
 
     Args:
