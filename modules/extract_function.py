@@ -6,7 +6,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 def extract_to_zip(AMP_API_KEY: str, AMP_SECRET_KEY: str, params: dict, url: str, data_dir: str, timestamp: str, max_attempts: int, delay: int):
-    """Function to extract .zip files from a URL using an API that requires keys and parameters, and saving to a destination 
+    """Function to extract .zip files from a URL using an API that requires keys and parameters, and saving to a destination. Returns True if saved successfully
 
     Args:
         AMP_API_KEY (str): API key value (get value from .env)

@@ -13,12 +13,13 @@ from dotenv import load_dotenv
 # Use with statement as start point
 # workout how to call this form the other script
 
-
 yesterday = dt.now() + timedelta(days=-1)
 timestamp = yesterday.strftime('%Y-%m-%d') # will want a loop that cycles through data folder and gives list of zips in there
 
 # locating the .zip file we need
 data_dir = os.path.abspath('c:data')
+
+
 
 # Find all .zip archives in data_dir (automatically ignores the Archive folder)
 zip_files = [

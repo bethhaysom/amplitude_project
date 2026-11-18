@@ -5,6 +5,7 @@ import re
 from modules.logging_function import logging_config
 from modules.s3_filecheck_function import checking_s3_files
 from modules.extract_function import extract_to_zip
+from modules.unzip_function import zip_to_json
 from datetime import datetime as dt, timedelta
 import requests 
 from dotenv import load_dotenv
@@ -43,12 +44,12 @@ default_date = dt(2026, 11, 15).date()
 
 # for extraction
 data_dir = 'data'
+unzip_dir = "unzip_data"
 
 url = 'https://analytics.eu.amplitude.com/api/2/export'
 
 max_attempts = 3
 delay = 30
-
 
 #-----------------------------------------------------------------------------
 # Checking existing s3 files:
@@ -78,4 +79,12 @@ extract_result = extract_to_zip(
     AMP_API_KEY, AMP_SECRET_KEY, params, url, data_dir, timestamp, max_attempts, delay
     )
 
-print(extract_result)
+if extract_result:
+    # unzip files
+    unzip_result = zip_to_json(data_dir, unzip_dir)
+    print(unzip_result)
+
+    # load .json files to s3
+
+else: 
+    logger.info('Extract saved no data, nothing to attempt to upload so aborted.')
