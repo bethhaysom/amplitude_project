@@ -14,11 +14,9 @@ timestamp = yesterday.strftime('%Y-%m-%d')
 #-----------------------------------------------------------------------------
 # setting up files for logging
 log_dir = 'logs'
-script_name = 'extract'
 log_timestamp = dt.now().strftime('%Y-%m-%d %H-%M-%S')
 os.makedirs(log_dir,exist_ok=True)
-os.makedirs(f'{log_dir}/{script_name}',exist_ok=True)
-log_filename = f'{log_dir}/{script_name}/{log_timestamp}.log'
+log_filename = f'{log_dir}/{log_timestamp}.log'
 
 # configuration of log file
 logging.basicConfig(
@@ -48,6 +46,7 @@ s3_client = boto3.client(
 )
 bucket_name = AWS_BUCKET_NAME
 prefix = 'python-import/'
+
 
 # list file names 
 response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
@@ -82,6 +81,7 @@ else:
     print("S3 is already up to date through yesterday. Skipping API call.")
     exit()
 
+
 start_date = start.strftime('%Y%m%dT00')
 end_date = yesterday.strftime('%Y%m%dT23')
 print(start_date)
@@ -106,7 +106,6 @@ filename = f'{data_dir}/{timestamp}.zip'
 
 # calling api
 url = 'https://analytics.eu.amplitude.com/api/2/export'
-
 
 #-----------------------------------------------------------------------------
 # checking attempt numbers
@@ -146,6 +145,7 @@ while attempt <= max_attempts:
             logging.warning(f'Max number of attempts reached. Status code {status_code}. Investigate further pls.')
         else: 
             print(f'Attempt {attempt} failed, status code {status_code}. Trying again...')
-            logger.error
+            logger.error(f'Attempt {attempt} failed, status code {status_code}. Trying again...')
         attempt += 1
-        time.sleep(30)
+        time.sleep(delay)
+
