@@ -7,6 +7,10 @@ from modules.load_function import load_to_s3
 from modules.unzip_function import zip_to_json
 from datetime import datetime as dt, timedelta
 from dotenv import load_dotenv
+from kestra import Kestra
+
+# load environment
+load_dotenv()
 
 # date configuration:
 yesterday = dt.now().date() + timedelta(days=-1)
@@ -19,14 +23,17 @@ log_timestamp = dt.now().strftime('%Y-%m-%d %H-%M-%S')
 
 logging_config(log_dir, log_timestamp)
 
-logger = logging.getLogger() 
+
+machine = os.getenv('machine')
+if machine == 'local':
+    logger = logging.getLogger() 
+else:
+    logger = Kestra.Logger()
+
 logger.info('Logger was succesfully initialiser.')
 
 #-----------------------------------------------------------------------------
-# Variable configuration:
-
-# collecting secrets
-load_dotenv()
+# Fetch Secrets:
 
 AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
