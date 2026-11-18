@@ -16,6 +16,6 @@ def logging_config(log_dir: str, log_timestamp: str):
     # configuration of log file
     logging.basicConfig(
         filename = log_filename,
-        format='%(asctime)s - %(levelname)s - %(message)s',
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         level=logging.INFO # ignore anything below INFO
     )

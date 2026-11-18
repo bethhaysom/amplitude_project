@@ -5,6 +5,7 @@ import re
 from modules.logging_function import logging_config
 from modules.s3_filecheck_function import checking_s3_files
 from modules.extract_function import extract_to_zip
+from modules.load_function import load_to_s3
 from modules.unzip_function import zip_to_json
 from datetime import datetime as dt, timedelta
 import requests 
@@ -45,6 +46,7 @@ default_date = dt(2026, 11, 15).date()
 # for extraction
 data_dir = 'data'
 unzip_dir = "unzip_data"
+unzip_amp = f'{unzip_dir}/100011471' #specific filepath for amplitude unzipped .json
 
 url = 'https://analytics.eu.amplitude.com/api/2/export'
 
@@ -82,9 +84,10 @@ extract_result = extract_to_zip(
 if extract_result:
     # unzip files
     unzip_result = zip_to_json(data_dir, unzip_dir)
-    print(unzip_result)
-
-    # load .json files to s3
-
+    if unzip_result:
+        # load .json files to s3
+        load_to_s3(unzip_amp, prefix, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME)
+    else:
+        logger.info("no .json files to upload to s3. skipping load stage")
 else: 
     logger.info('Extract saved no data, nothing to attempt to upload so aborted.')
