@@ -3,6 +3,7 @@ import time
 import logging
 import re
 from modules.logging_function import logging_config
+from modules.s3_filecheck_function import checking_s3_files
 from datetime import datetime as dt, timedelta
 import requests 
 from dotenv import load_dotenv
@@ -18,3 +19,39 @@ log_dir = 'logs'
 log_timestamp = dt.now().strftime('%Y-%m-%d %H-%M-%S')
 
 logging_config(log_dir, log_timestamp)
+
+logger = logging.getLogger() 
+logger.info('Logger was succesfully initialiser.')
+
+#-----------------------------------------------------------------------------
+# Checking existing s3 files:
+load_dotenv()
+
+AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_BUCKET_NAME = os.getenv('AWS_BUCKET_NAME')
+
+AMP_API_KEY = os.getenv('AMP_API_KEY')
+AMP_SECRET_KEY = os.getenv('AMP_SECRET_KEY')
+
+prefix = 'python-import/'
+default_date = dt(2026, 11, 15).date()
+
+s3_check = checking_s3_files(
+    AWS_ACCESS_KEY, 
+    AWS_SECRET_ACCESS_KEY, 
+    AWS_BUCKET_NAME, 
+    prefix, 
+    default_date, 
+    yesterday)
+
+if s3_check is None: 
+    exit() # means S3 is already up to date through yesterday. Skipping API call.
+else:
+    start = s3_check
+
+start_date = start.strftime('%Y%m%dT00')
+end_date = yesterday.strftime('%Y%m%dT23')
+logging.info(f'start date defined as {start_date}, end date defined as {end_date}')
+
+

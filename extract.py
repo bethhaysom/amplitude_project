@@ -47,6 +47,7 @@ s3_client = boto3.client(
 bucket_name = AWS_BUCKET_NAME
 prefix = 'python-import/'
 
+
 # list file names 
 response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
 # Filter for .json files in Python (S3 doesn't filter by suffix natively)
@@ -80,6 +81,7 @@ else:
     print("S3 is already up to date through yesterday. Skipping API call.")
     exit()
 
+
 start_date = start.strftime('%Y%m%dT00')
 end_date = yesterday.strftime('%Y%m%dT23')
 print(start_date)
@@ -96,6 +98,21 @@ params = {
     'start': f'{start_date}',
     'end': f'{end_date}'
 }
+
+def extract_to_json(AMP_API_KEY: str, AMP_SECRET_KEY: str, params: dict, url: str, data_dir: str, timestamp: str, max_attempts: int, delay: int):
+    """Function to extract .zip files from a URL using an API that requires keys and parameters, and saving to a destination 
+
+    Args:
+        AMP_API_KEY (str): _description_
+        AMP_SECRET_KEY (str): _description_
+        params (dict): _description_
+        url (str): _description_
+        data_dir (str): _description_
+        timestamp (str): _description_
+        max_attempts (int): _description_
+        delay (int): _description_
+    """
+
 
 # configure output file
 data_dir = 'data'
