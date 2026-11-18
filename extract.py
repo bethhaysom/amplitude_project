@@ -14,11 +14,9 @@ timestamp = yesterday.strftime('%Y-%m-%d')
 #-----------------------------------------------------------------------------
 # setting up files for logging
 log_dir = 'logs'
-script_name = 'extract'
 log_timestamp = dt.now().strftime('%Y-%m-%d %H-%M-%S')
 os.makedirs(log_dir,exist_ok=True)
-os.makedirs(f'{log_dir}/{script_name}',exist_ok=True)
-log_filename = f'{log_dir}/{script_name}/{log_timestamp}.log'
+log_filename = f'{log_dir}/{log_timestamp}.log'
 
 # configuration of log file
 logging.basicConfig(
