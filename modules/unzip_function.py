@@ -16,7 +16,7 @@ def zip_to_json(data_dir: str, unzip_dir: str):
     """
     
     # locating the .zip file we need
-    data_dir = os.path.abspath(f'c:{data_dir}')
+    data_dir = os.path.abspath(f'{data_dir}')
 
     # Find all .zip archives in data_dir (automatically ignores the Archive folder)
     zip_files = [
